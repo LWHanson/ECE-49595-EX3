@@ -1,4 +1,5 @@
 This repository contains the files used for ECE 49595 exercise 3. My objective for this assignment was to learn how to train and test a simple image classification model using PyTorch.
 
-A model that I have trained using my scripts, 'classifier.pth' is available in this repository. Should you wish to run the scripts to generate the model yourself, you will need to execute 'data_prep.py' first.
-This will load the image set for training and testing into a 'data' directory on your machine. The image set is not included in this repository as it is prohibitively large to push to GitHub.
+A model that I have trained using my scripts, 'classifier.pth' is available in this repository. Should you wish to run the scripts to generate the model yourself, you will need to execute 'data_prep.py' first. This will load the image set for training and testing into a 'data' directory on your machine. The image set is not included in this repository as it is prohibitively large to push to GitHub.
+
+'training.py' will train the model based on the imageset loaded by 'data_prep.py'. To use a custom imageset, you must create a directory titled "custom_data" in the project directory with sub-folders named "airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", and "truck". The model can be used on custom data by running 'testing.py'.
