@@ -1,6 +1,7 @@
 # This script obtains training and testing data for the image classification model
 
 from torchvision.datasets import CIFAR10
+from torchvision import datasets
 from torchvision.transforms import transforms
 from torch.utils.data import DataLoader
 
@@ -11,6 +12,9 @@ transformations = transforms.Compose([
 
 BATCH_SIZE = 10
 NUM_LABELS = 10
+IMG_SIZE = 32
+IMG_HT = int(IMG_SIZE * 4 / 3)
+USE_CUSTOM = True
 
 training_set = CIFAR10(root="./data", train=True, transform=transformations, download=True)
 
@@ -23,4 +27,16 @@ testing_loader = DataLoader(testing_set, batch_size=BATCH_SIZE, shuffle=True, nu
 print("Number of images in testing set: " + str(len(testing_loader) * BATCH_SIZE))
 
 print("Number of batches per epoch: " + str(len(training_loader)))
+
 classes = ("plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck")
+
+transform = transforms.Compose([
+    transforms.Resize((IMG_SIZE, IMG_HT)),
+    transforms.CenterCrop(IMG_SIZE),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+])
+
+imageset = datasets.ImageFolder("./custom_data", transform=transform)
+image_loader = DataLoader(imageset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+print(testing_set.classes)

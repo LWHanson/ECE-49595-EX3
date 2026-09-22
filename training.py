@@ -10,6 +10,7 @@ from torch.optim import Adam
 from torch.autograd import Variable
 from data_prep import testing_loader
 from data_prep import training_loader
+from data_prep import image_loader
 from data_prep import classes
 from data_prep import BATCH_SIZE
 from data_prep import NUM_LABELS
@@ -136,6 +137,27 @@ def testClasses():
 
     for i in range(NUM_LABELS):
         print("Accuracy of %5s : %2d %%" % (classes[i], 100 * class_correct[i] / class_total[i]))
+
+def testCustom():
+    images, labels = next(iter(image_loader))
+
+    print("Actual labels: ", " ".join("%5s" % classes[labels[j]] for j in range(BATCH_SIZE)))
+    outputs = model(images)
+    
+    _, predicted = torch.max(outputs, 1)
+    print("Predicted: ", " ".join("%5s" % classes[predicted[j]] for j in range(BATCH_SIZE)))
+    imageshow(torchvision.utils.make_grid(images))
+    # custom_correct = 0
+    # custom_total = 0
+
+    # with torch.no_grad():
+    #     for images, labels in image_loader:
+    #         predictions = model(images).argmax(dim=1)
+    #         custom_correct += (predictions == labels).sum().item()
+    #         custom_total += labels.size(0)
+    #         print("Predicted Label: " + predictions)
+    #         print("Actual Label: " + labels)
+    # imageshow(torchvision.utils.make_grid(images))
 
 if __name__ == "__main__":
     print("Starting Training")
