@@ -48,6 +48,7 @@ class Network(nn.Module):
         return(output)
 
 model = Network()
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 loss_function = nn.CrossEntropyLoss()
 optimizer = Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
@@ -111,10 +112,12 @@ def imageshow(img):
     plt.show()
 
 def testBatch():
+    model.eval()
     images, labels = next(iter(testing_loader))
 
     print("Actual labels: ", " ".join("%5s" % classes[labels[j]] for j in range(BATCH_SIZE)))
-    outputs = model(images)
+    with torch.no_grad():
+        outputs = model(images.to(device)).cpu()
 
     _, predicted = torch.max(outputs, 1)
     print("Predicted: ", " ".join("%5s" % classes[predicted[j]] for j in range(BATCH_SIZE)))
@@ -123,11 +126,12 @@ def testBatch():
 def testClasses():
     class_correct = list(0. for i in range(NUM_LABELS))
     class_total = list(0. for i in range(NUM_LABELS))
+    model.eval()
 
     with torch.no_grad():
         for data in testing_loader:
             images, labels = data
-            outputs = model(images)
+            outputs = model(images.to(device)).cpu()
             _, predicted = torch.max(outputs, 1)
             c = (predicted == labels).squeeze()
             for i in range(BATCH_SIZE):
@@ -139,10 +143,12 @@ def testClasses():
         print("Accuracy of %5s : %2d %%" % (classes[i], 100 * class_correct[i] / class_total[i]))
 
 def testCustom():
+    model.eval()
     images, labels = next(iter(image_loader))
 
     print("Actual labels: ", " ".join("%5s" % classes[labels[j]] for j in range(BATCH_SIZE)))
-    outputs = model(images)
+    with torch.no_grad():
+        outputs = model(images.to(device)).cpu()
     
     _, predicted = torch.max(outputs, 1)
     print("Predicted: ", " ".join("%5s" % classes[predicted[j]] for j in range(BATCH_SIZE)))
@@ -169,6 +175,7 @@ if __name__ == "__main__":
 
     model = Network()
     path = "classifier.pth"
-    model.load_state_dict(torch.load(path))
+    model.load_state_dict(torch.load(path, map_location=device))
+    model.to(device)
 
     testBatch()
